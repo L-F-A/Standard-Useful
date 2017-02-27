@@ -138,3 +138,71 @@ def deriv_Gauss(x,n,sig):
 	else:
 		dG=(-1./(np.sqrt(2.)*sig))**n*eval_hermite(n,arg)*G
 	return G,dG
+
+def IntSimp(f,xinterval,interval):
+###################################################################################
+#	Integral of a function contained in a vector by Simpson 1/3		  #
+#										  #
+#	INPUTS:									  #
+#		f 	  : Choice 1-vector with the values of the function       #
+#		    	    Choice 2-matrix; each line is considered to be a      # 
+#			    different function to integrate			  #
+#		xinterval : List with values for the integration region. Integral #
+#			    from xinterval[0] to xinterval[1]			  #
+#		interval  : Number of intervals, must be even and greater than 2  #
+#										  #
+#	OUTPUT:									  #
+#		Value(s) of the integral(s) over number of intervals 'interval'	  #
+###################################################################################
+	xinit = xinterval[0]
+	xfinal = xinterval[1]
+	hstep  = (xfinal-xinit)/float(interval)
+
+	if interval % 2:
+		raise ValueError('The number of intervals n must be even')
+	elif interval < 2:
+		raise ValueError('The min number of intervals is 2')
+
+	#Build the coefficients for Simpson 1/3
+	indice_Simp=np.arange(0,interval+1)
+	coeffs_simp_vec = 3.+(-1.)**(indice_Simp+1) #pattern of alternating 2's and 4'
+	coeffs_simp_vec[0]=1.
+	coeffs_simp_vec[-1]=1.
+	
+	if f.ndim == 1:
+		return np.sum(coeffs_simp_vec*f)*hstep/3.
+	else:
+		return np.sum(coeffs_simp_vec*f,axis=1)*hstep/3.
+####################################################################################
+
+def IntTrapz(f,xinterval,interval):
+###################################################################################
+#       Integral of a function contained in a vector by Trapezoidal               #
+#                                                                                 #
+#       INPUTS:                                                                   #
+#               f         : Choice 1-vector with the values of the function       #
+#                           Choice 2-matrix; each line is considered to be a      #
+#                           different function to integrate                       #
+#               xinterval : List with values for the integration region. Integral #
+#                           from xinterval[0] to xinterval[1]                     #
+#               interval  : Number of intervals, must be at least 1		  #
+#                                                                                 #
+#       OUTPUT:                                                                   #
+#               Value(s) of the integral(s) over number of intervals 'interval'   #
+###################################################################################
+        xinit = xinterval[0]
+        xfinal = xinterval[1]
+        hstep  = (xfinal-xinit)/float(interval)
+
+        if interval < 1:
+                raise ValueError('The min number of intervals is 1')
+
+        #Build the coefficients
+	coeffs_Trapz=np.ones(interval+1)
+	coeffs_Trapz[1:-1]=2.
+
+        if f.ndim == 1:
+                return np.sum(coeffs_Trapz*f)*hstep/2.
+        else:
+                return np.sum(coeffs_Trapz*f,axis=1)*hstep/2.
+####################################################################################
