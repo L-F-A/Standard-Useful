@@ -81,7 +81,26 @@ def DataMatFormat(file_name):
 	return data,InfoVar
 #################################################################################
 
-
+def DataMatlabFormat(file_name):
+#################################################################################
+#               Open data saved in Matlab .mat format v7.3                      #
+#                   The library h5py must be installed                          #
+#                                                                               #
+#       Contrary to DataMatFormat above, it does not load all data in memory    #
+#                                                                               #
+# Return:                                                                       #
+#                                                                               #
+#  data    : a dictionary with keys the variables names and values the data     #
+#            datasets                                                           #
+#  InfoVar : a dictionary with keys the variables names and values the size of  #
+#            variables (row,columns)                                            #
+#################################################################################
+        data=h5py.File(file_name,'r')
+        VarName=map(str,data.keys())
+        SizeVar=map(lambda x: data[x].shape,data.keys())
+        InfoVar=dict(zip(VarName,SizeVar))
+        return data,InfoVar
+#################################################################################
 
 def  CompleteEllip(t,WithErr=False):
 #"""
